@@ -65,6 +65,6 @@ jobs:
           git add .
           git reset settings.xml log.txt toolchains.xml
           git commit -m "Update dev version"
-          git push
+          git push --tags
       - name: Notify Discord
         run: pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
