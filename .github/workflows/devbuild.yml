@@ -13,14 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Checkout repo
-        with:
-          path: app
       - name: Configure git
         run: |
           git config --global user.name "Auto Bot"
           git config --global user.email "<>"
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: 17
@@ -37,29 +35,36 @@ jobs:
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          cd app
           mvn clean deploy -P gpg,publish -DcreateChecksum=true 2>&1 | tee log.txt
           result_code=${PIPESTATUS[0]}
           exit $result_code
-      - uses: actions/checkout@v3
-        name: Checkout editor branch
-        with:
-          ref: editor
-          path: editor
-      - name: Update Javadocs
+      - name: Tag release version
         run: |
-          cp -r app/gh-pages/javadocs editor/static/javadocs
-          cd editor
           git add .
-          git commit -m "Update javadocs"
-          git push
+          git reset settings.xml log.txt
+          git commit -m "Update release version"
+          version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          git tag -a $version -m "Release $version"
+#      - uses: actions/checkout@v3
+#        name: Checkout editor branch
+#        with:
+#          ref: editor
+#          path: editor
+#      - name: Update Javadocs
+#        run: |
+#          cp -r app/gh-pages/javadocs editor/static/javadocs
+#          cd editor
+#          git add .
+#          git commit -m "Update javadocs"
+#          git push
       - name: Update version
-        run: cd app && python ./.github/update_version.py true
+        run: python ./.github/update_version.py true
       - name: Push to git
         run: |
           cd app
           git add .
+          git reset settings.xml log.txt
           git commit -m "Update dev version"
           git push
       - name: Notify Discord
-        run: cd app && pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
+        run: pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
