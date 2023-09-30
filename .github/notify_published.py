@@ -20,8 +20,9 @@ def get_info():
 
 
 version, name, url = get_info()
-split = version.split('-')[0:-2]
-version = '-'.join(split)
+if is_dev:
+    split = version.split('-')[0:-2]
+    version = '-'.join(split)
 if not is_dev:
     url = re.sub(
         'https:\/\/s01\.oss\.sonatype\.org:443\/service\/local\/staging\/deployByRepositoryId\/compromcteam-\d+',
