@@ -3,7 +3,7 @@ name: Release Build
 on:
   push:
     branches: [ main ]
-    paths: [ src/** ]
+#    paths: [ src/** ]
 
 jobs:
   deploy:
@@ -45,14 +45,13 @@ jobs:
         run: python ./.github/update_version.py true
       - name: Update README
         run: python ./.github/update_readme.py
-      - id: get-version
-        uses: jactions/maven-version@v1
       - name: Push to git
         run: |
           git add .
           git reset settings.xml log.txt
           git commit -m "Update release version"
-          git tag -a ${{ steps.get-version.outputs.version }} -m "Release ${{ steps.get-version.outputs.version }}"
+          version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          git tag -a $version -m "Release $version"
           git push
 #          git fetch --unshallow --all
 #          git checkout dev
