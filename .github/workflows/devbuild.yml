@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.commits[0].author.name != 'Auto Bot'
 
     steps:
       - uses: actions/checkout@v3
@@ -64,7 +63,8 @@ jobs:
         run: |
           git add .
           git reset settings.xml log.txt toolchains.xml
-          git commit -m "Update dev version"
+          git commit -m "[ci skip] Update dev version"
+          git push
           git push --tags
       - name: Notify Discord
         run: pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
