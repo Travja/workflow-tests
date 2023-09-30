@@ -3,7 +3,7 @@ import requests
 import simplejson as json
 import sys
 
-is_dev = bool(sys.argv[2])
+is_dev = len(sys.argv) >= 3 and bool(sys.argv[2])
 search_string = \
     r'Uploaded to (ossrh|central): (https:\/\/s01\.oss\.sonatype\.org(:443)?\/.*?\/com\/promcteam\/(.*?)\/(.*?)\/(' \
     r'.*?)(?<!sources|javadoc)\.jar(?!\.asc)) '
