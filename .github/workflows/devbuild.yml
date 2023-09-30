@@ -44,7 +44,6 @@ jobs:
         run: |
           git add .
           git reset settings.xml log.txt toolchains.xml
-          git commit -m "Update dev version"
           version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
           git tag -a $version -m "Dev $version"
 #      - uses: actions/checkout@v3
