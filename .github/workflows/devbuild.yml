@@ -43,10 +43,10 @@ jobs:
       - name: Tag release version
         run: |
           git add .
-          git reset settings.xml log.txt
-          git commit -m "Update release version"
+          git reset settings.xml log.txt toolchains.xml
+          git commit -m "Update dev version"
           version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          git tag -a $version -m "Release $version"
+          git tag -a $version -m "Dev $version"
 #      - uses: actions/checkout@v3
 #        name: Checkout editor branch
 #        with:
@@ -63,9 +63,8 @@ jobs:
         run: python ./.github/update_version.py true
       - name: Push to git
         run: |
-          cd app
           git add .
-          git reset settings.xml log.txt
+          git reset settings.xml log.txt toolchains.xml
           git commit -m "Update dev version"
           git push
       - name: Notify Discord
