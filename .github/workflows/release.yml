@@ -49,6 +49,9 @@ jobs:
           version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
           git tag -a $version -m "Release $version"
           git push --tags
+          git fetch --unshallow --all
+          git checkout dev
+          git merge -X theirs --no-edit main
       - name: Update version
         run: python ./.github/update_version.py
       - name: Update version
@@ -58,10 +61,6 @@ jobs:
           git add .
           git reset settings.xml log.txt toolchains.xml
           git commit -m "Update version for development"
-          git push
-          git fetch --unshallow --all
-          git checkout dev
-          git merge -X theirs --no-edit main
           git push
       - name: Notify Discord
         run: pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
