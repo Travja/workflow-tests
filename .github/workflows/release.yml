@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTIONS_PAT }}
       - name: Configure git
         run: |
           git config user.name "Auto Bot"
@@ -55,9 +57,9 @@ jobs:
           git add .
           git commit -m "Update version for development"
           git push
-#          git fetch --unshallow --all
-#          git checkout dev
-#          git merge -X theirs --no-edit main
-#          git push
+          git fetch --unshallow --all
+          git checkout dev
+          git merge -X theirs --no-edit main
+          git push
       - name: Notify Discord
         run: pip install simplejson && python ./.github/notify_published.py ${{ secrets.WEBHOOK_URL }}
